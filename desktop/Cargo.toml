@@ -1,0 +1,58 @@
+[package]
+name = "lan-remote-type"
+version = "1.0.0"
+description = "LAN-based remote typing system for Windows"
+authors = ["SyncType"]
+edition = "2021"
+rust-version = "1.70"
+
+[lib]
+name = "lan_remote_type"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[[bin]]
+name = "lan-remote-type"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+tauri = { version = "1.5", features = ["api-all", "system-tray"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.35", features = ["full"] }
+tokio-util = "0.7"
+futures = "0.3"
+futures-util = "0.3"
+tungstenite = { version = "0.21", features = ["handshake"] }
+tokio-tungstenite = "0.21"
+enigo = "0.2"
+image = { version = "0.24", features = ["png"] }
+uuid = { version = "1.6", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+sha2 = "0.10"
+rand = "0.8"
+dirs = "5.0"
+anyhow = "1.0"
+thiserror = "1.0"
+log = "0.4"
+env_logger = "0.10"
+parking_lot = "0.12"
+once_cell = "1.19"
+regex = "1.10"
+hostname = "0.4"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+base64 = "0.21"
+windows = { version = "0.52", features = ["Win32_UI_WindowsAndMessaging", "Win32_Foundation"] }
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SyncType</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#000;--glass:rgba(18,18,24,0.45);--glass-e:rgba(28,28,36,0.5);--fill:rgba(50,50,56,0.3);--fill-h:rgba(60,60,68,0.45);--border:rgba(255,255,255,0.07);--border-h:rgba(255,255,255,0.28);--text:#f5f5f7;--t2:rgba(235,235,245,0.55);--t3:rgba(235,235,245,0.4);--blue:#0a84ff;--blue-h:#409cff;--green:#30d158;--red:#ff453a;--orange:#ff9f0a;--r:16px;--rs:10px}
+html,body{height:100%;margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-y:auto;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 30% 20%,rgba(10,132,255,0.04) 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(94,92,230,0.03) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+.app{width:100%;min-height:100vh;margin:0 auto;padding:10px 14px 14px;display:flex;flex-direction:column;gap:8px;position:relative;z-index:1}
+
+@media(min-width:500px){
+  .app{max-width:460px;padding:12px 20px 16px;gap:10px}
+}
+@media(min-width:800px){
+  .app{max-width:520px;padding:20px 28px 24px;gap:16px;justify-content:space-between}
+  .g{padding:18px 22px;flex-grow:1}
+  .gr{gap:10px}
+  .hdr h1{font-size:18px}
+  .hdr{padding:20px 0 12px}
+  .ft{padding:20px 0 8px}
+  .cts{gap:8px}
+}
+
+.hdr{text-align:center;padding:12px 0 6px;flex-shrink:0}
+.hdr h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;color:var(--text)}
+.hdr p{font-size:11px;color:var(--t3);margin-top:2px}
+
+.g{
+  background:var(--glass);
+  border-radius:var(--r);
+  padding:14px 16px;
+  border:0.5px solid var(--border);
+  backdrop-filter:blur(80px) saturate(200%) brightness(1.15);
+  -webkit-backdrop-filter:blur(80px) saturate(200%) brightness(1.15);
+  transition:border-color 0.3s,box-shadow 0.3s;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 2px 20px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.g::before{content:'';position:absolute;top:0;left:0;right:0;height:0.5px;background:linear-gradient(90deg,transparent 5%,rgba(255,255,255,0.1) 30%,rgba(255,255,255,0.14) 50%,rgba(255,255,255,0.1) 70%,transparent 95%);pointer-events:none}
+.g::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;border-radius:inherit;background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,0.04) 0%,transparent 60%);pointer-events:none}
+.g:hover{border-color:var(--border-h);box-shadow:0 8px 40px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px rgba(255,255,255,0.05)}
+
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;position:relative;z-index:1}
+.ct{font-size:10px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:0.6px}
+.bg{font-size:9px;padding:2px 7px;border-radius:6px;font-weight:500}
+.bg-g{background:rgba(48,209,88,0.12);color:var(--green)}
+.bg-b{background:rgba(10,132,255,0.12);color:var(--blue)}
+
+.gr{display:grid;grid-template-columns:1fr 1fr;gap:6px;position:relative;z-index:1}
+.st{display:flex;align-items:center;gap:8px;padding:8px 9px;background:var(--fill);border-radius:var(--rs);border:0.5px solid transparent;transition:all 0.2s}
+.st:hover{background:var(--fill-h);border-color:var(--border)}
+
+.dt{width:5px;height:5px;border-radius:50%;flex-shrink:0;position:relative}
+.dt::after{content:'';position:absolute;inset:-2px;border-radius:50%;opacity:0.4}
+.dt-g{background:var(--green);box-shadow:0 0 6px rgba(48,209,88,0.5)}.dt-g::after{background:var(--green)}
+.dt-r{background:var(--red);box-shadow:0 0 6px rgba(255,69,58,0.4)}.dt-r::after{background:var(--red)}
+.dt-b{background:var(--blue);box-shadow:0 0 6px rgba(10,132,255,0.5)}.dt-b::after{background:var(--blue)}
+
+.sl{font-size:9px;color:var(--t3);line-height:1.2}
+.sv{font-size:11px;font-weight:500;line-height:1.2}
+
+.btn{position:relative;padding:8px 14px;border:none;border-radius:var(--rs);font-size:11px;font-weight:500;cursor:pointer;transition:all 0.25s cubic-bezier(0.25,0.1,0.25,1);display:inline-flex;align-items:center;justify-content:center;gap:4px;-webkit-tap-highlight-color:transparent;overflow:hidden;letter-spacing:-0.1px}
+.btn::before{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,0.1) 0%,transparent 60%);opacity:0;transition:opacity 0.25s}
+.btn:hover::before{opacity:1}
+.btn:active{transform:scale(0.95)}
+
+.btn-g{background:var(--fill);color:var(--text);border:0.5px solid var(--border);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05)}
+.btn-g:hover{background:var(--fill-h);border-color:var(--border-h);transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.08)}
+.btn-r{background:rgba(255,69,58,0.1);color:var(--red);border:0.5px solid rgba(255,69,58,0.12)}
+.btn-r:hover{background:rgba(255,69,58,0.2);border-color:rgba(255,69,58,0.25);transform:translateY(-2px);box-shadow:0 6px 24px rgba(255,69,58,0.2)}
+.btn-gr{background:rgba(48,209,88,0.1);color:var(--green);border:0.5px solid rgba(48,209,88,0.12)}
+.btn-gr:hover{background:rgba(48,209,88,0.2);border-color:rgba(48,209,88,0.25);transform:translateY(-2px);box-shadow:0 6px 24px rgba(48,209,88,0.2)}
+.btn-o{background:rgba(255,159,10,0.1);color:var(--orange);border:0.5px solid rgba(255,159,10,0.12)}
+.btn-o:hover{background:rgba(255,159,10,0.2);border-color:rgba(255,159,10,0.25);transform:translateY(-2px);box-shadow:0 6px 24px rgba(255,159,10,0.2)}
+
+.dv{display:flex;align-items:center;gap:10px;padding:8px 9px;background:var(--fill);border-radius:var(--rs);border:0.5px solid transparent;transition:all 0.2s;cursor:pointer}
+.dv:hover{background:var(--fill-h);border-color:var(--border)}
+.di{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--blue),#5e5ce6);color:#fff;font-size:10px;font-weight:600}
+.dn{font-size:11px;font-weight:500;line-height:1.2}
+.did{font-size:8px;color:var(--t3);line-height:1.2}
+.ds{font-size:8px;color:var(--green);font-weight:500;margin-left:auto}
+
+.em{text-align:center;padding:14px 8px;color:var(--t3);font-size:10px}
+
+.pt{height:3px;background:var(--fill);border-radius:2px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--blue),#5e5ce6);border-radius:2px;transition:width 0.3s}
+
+/* iOS Spinner Overlay */
+.spinner-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.3);
+  backdrop-filter:blur(30px) saturate(180%);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);
+  display:none;align-items:center;justify-content:center;
+  z-index:150;
+  opacity:0;
+  transition:opacity 0.25s ease;
+}
+.spinner-overlay.show{display:flex;opacity:1}
+.spinner-box{
+  background:rgba(44,44,46,0.65);
+  border-radius:12px;
+  padding:10px 14px;
+  text-align:center;
+  backdrop-filter:blur(60px) saturate(200%);
+  -webkit-backdrop-filter:blur(60px) saturate(200%);
+  border:0.5px solid rgba(255,255,255,0.12);
+  box-shadow:0 12px 40px rgba(0,0,0,0.35);
+}
+/* iOS Spinner - native activity indicator */
+.spinner{
+  position:relative;
+  width:54px;height:54px;
+  display:inline-block;
+  margin:0 auto 2px;
+  padding:10px;
+}
+.spinner div{
+  width:6%;height:16%;
+  background:#fff;
+  position:absolute;
+  left:49%;top:43%;
+  opacity:0;
+  border-radius:50px;
+  box-shadow:0 0 3px rgba(0,0,0,0.2);
+  animation:fade 1s linear infinite;
+}
+@keyframes fade{from{opacity:1}to{opacity:0.25}}
+.spinner .bar1{transform:rotate(0deg) translate(0,-130%);animation-delay:0s}
+.spinner .bar2{transform:rotate(30deg) translate(0,-130%);animation-delay:-0.9167s}
+.spinner .bar3{transform:rotate(60deg) translate(0,-130%);animation-delay:-0.833s}
+.spinner .bar4{transform:rotate(90deg) translate(0,-130%);animation-delay:-0.7497s}
+.spinner .bar5{transform:rotate(120deg) translate(0,-130%);animation-delay:-0.667s}
+.spinner .bar6{transform:rotate(150deg) translate(0,-130%);animation-delay:-0.5837s}
+.spinner .bar7{transform:rotate(180deg) translate(0,-130%);animation-delay:-0.5s}
+.spinner .bar8{transform:rotate(210deg) translate(0,-130%);animation-delay:-0.4167s}
+.spinner .bar9{transform:rotate(240deg) translate(0,-130%);animation-delay:-0.333s}
+.spinner .bar10{transform:rotate(270deg) translate(0,-130%);animation-delay:-0.2497s}
+.spinner .bar11{transform:rotate(300deg) translate(0,-130%);animation-delay:-0.167s}
+.spinner .bar12{transform:rotate(330deg) translate(0,-130%);animation-delay:-0.0833s}
+.spinner-text{font-size:11px;color:rgba(255,255,255,0.8);font-weight:500;margin:0}
+
+.ov{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(16px);display:none;align-items:center;justify-content:center;z-index:100}
+.ov.show{display:flex}
+.dl{background:var(--glass-e);border-radius:18px;padding:22px;max-width:280px;width:82%;text-align:center;backdrop-filter:blur(100px) saturate(200%);border:0.5px solid var(--border);animation:sup 0.3s ease;box-shadow:0 16px 64px rgba(0,0,0,0.4)}
+.dl::before{content:'';position:absolute;top:0;left:0;right:0;height:0.5px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent)}
+@keyframes sup{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.dlt{font-size:15px;font-weight:600;margin-bottom:2px}
+.dls{font-size:11px;color:var(--blue);font-weight:500;margin-bottom:12px}
+.dlp{font-size:10px;color:var(--t2);margin-bottom:16px;line-height:1.5}
+.dlb{display:flex;gap:8px}
+.dlb .btn{flex:1;padding:9px}
+
+.t{position:fixed;top:10px;left:50%;transform:translateX(-50%) translateY(-60px);padding:8px 18px;border-radius:10px;font-size:10px;font-weight:500;z-index:200;transition:transform 0.3s ease;backdrop-filter:blur(20px);border:0.5px solid var(--border)}
+.t.show{transform:translateX(-50%) translateY(0)}
+.t-s{background:rgba(48,209,88,0.9);color:#fff}
+.t-e{background:rgba(255,69,58,0.9);color:#fff}
+.t-i{background:rgba(10,132,255,0.9);color:#fff}
+
+.stl{display:inline-block;padding:2px 7px;border-radius:4px;font-size:8px;font-weight:500;background:rgba(255,159,10,0.1);color:var(--orange);border:0.5px solid rgba(255,159,10,0.12)}
+
+.cts{display:grid;grid-template-columns:1fr 1fr;gap:6px;position:relative;z-index:1}
+.cts .btn{width:100%}
+
+.ft{text-align:center;padding:12px 0 4px;font-size:10px;color:var(--t3);flex-shrink:0;border-top:0.5px solid rgba(255,255,255,0.04)}
+
+/* Scrollbar - visible grey */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);border-radius:3px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.18);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.28)}
+</style>
+</head>
+<body>
+<div class="app" id="app" style="display:none">
+<div class="hdr"><h1>SyncType</h1><p>v1.0.0 <span id="stl" class="stl" style="display:none">STEALTH</span></p></div>
+<div id="toast" class="t"></div>
+
+<div class="g">
+<div class="ch"><span class="ct">Status</span><span class="bg bg-g">Online</span></div>
+<div class="gr">
+<div class="st"><div class="dt dt-g"></div><div><div class="sl">Server</div><div class="sv">9876</div></div></div>
+<div class="st"><div class="dt dt-g"></div><div><div class="sl">Discovery</div><div class="sv">Active</div></div></div>
+<div class="st"><div class="dt" id="cd"></div><div><div class="sl">Connected</div><div class="sv" id="cc">0</div></div></div>
+<div class="st"><div class="dt dt-b"></div><div><div class="sl">Uptime</div><div class="sv" id="up">0s</div></div></div>
+</div>
+<div style="margin-top:8px;padding:8px 10px;background:var(--fill);border-radius:var(--rs);position:relative;z-index:1">
+<div style="font-size:9px;color:var(--t3);margin-bottom:2px">IP Address (use in Android)</div>
+<div style="font-size:13px;font-weight:600;color:var(--blue);font-family:monospace" id="ip-addr">Loading...</div>
+</div>
+</div>
+
+<div class="g">
+<div class="ch"><span class="ct">Connected Devices</span><span class="bg bg-b" id="dc">0</span></div>
+<div id="dl"><div class="em">No devices connected</div></div>
+</div>
+
+<div class="g">
+<div class="ch"><span class="ct">Trusted Devices</span><span class="bg bg-b" id="tdc">0</span></div>
+<div id="tdl"><div class="em">No trusted devices</div></div>
+</div>
+
+<div class="g">
+<div class="ch"><span class="ct">Blocked Devices</span><span class="bg bg-b" id="bdc">0</span></div>
+<div id="bdl"><div class="em">No blocked devices</div></div>
+</div>
+
+<div class="g">
+<div class="ch"><span class="ct">Typing</span></div>
+<div id="ts"><div class="em">Idle</div></div>
+</div>
+
+<div class="g">
+<div class="ch"><span class="ct">Controls</span></div>
+<div class="cts">
+<button class="btn btn-g" onclick="hideWin()">Minimize</button>
+<button class="btn btn-o" onclick="togStl()">Stealth</button>
+<button class="btn btn-g" onclick="doRefresh()">Refresh</button>
+<button class="btn btn-r" onclick="quit()">Quit</button>
+</div>
+<div style="margin-top:8px">
+<button class="btn btn-r" style="width:100%;font-size:10px;padding:6px" onclick="clearAllData()">Clear All Data</button>
+</div>
+</div>
+
+<div class="ft">SyncType</div>
+</div>
+
+<!-- iOS Spinner -->
+<div class="spinner-overlay" id="spinner">
+<div class="spinner-box">
+<div class="spinner">
+<div class="bar1"></div><div class="bar2"></div><div class="bar3"></div><div class="bar4"></div>
+<div class="bar5"></div><div class="bar6"></div><div class="bar7"></div><div class="bar8"></div>
+<div class="bar9"></div><div class="bar10"></div><div class="bar11"></div><div class="bar12"></div>
+</div>
+<div class="spinner-text">Refreshing...</div>
+</div>
+</div>
+
+<div class="ov" id="ov">
+<div class="dl">
+<div class="dlt">Connection Request</div>
+<div class="dls" id="dd">Device</div>
+<div class="dlp">wants to connect to your computer</div>
+<div class="dlb">
+<button class="btn btn-r" onclick="rej()">Reject</button>
+<button class="btn btn-gr" onclick="app()">Approve</button>
+</div>
+</div>
+</div>
+
+<div id="loading" style="text-align:center;padding:80px 20px;color:rgba(235,235,245,0.3)"><div style="font-size:13px">Loading...</div></div>
+
+<script>
+var invokeFn=null,refreshTimer=null,isStealth=false,isRefreshing=false;
+function findInvoke(){try{if(window.__TAURI__){if(typeof window.__TAURI__.invoke==='function'){invokeFn=window.__TAURI__.invoke;return true}if(window.__TAURI__.tauri&&typeof window.__TAURI__.tauri.invoke==='function'){invokeFn=window.__TAURI__.tauri.invoke;return true}}}catch(e){}return false}
+function invoke(cmd,args){if(!invokeFn)return Promise.reject();return invokeFn(cmd,args||{})}
+function showToast(msg,type){var el=document.getElementById('toast');el.textContent=msg;el.className='t t-'+type+' show';setTimeout(function(){el.className='t'},2000)}
+function formatUptime(s){if(s<60)return s+'s';if(s<3600)return Math.floor(s/60)+'m';return Math.floor(s/3600)+'h'+Math.floor((s%3600)/60)+'m'}
+function updateConn(n){var d=document.getElementById('cd'),v=document.getElementById('cc');if(n>0){d.className='dt dt-g';v.textContent=n}else{d.className='dt dt-r';v.textContent='0'}}
+function renderDevs(devs){var l=document.getElementById('dl'),c=document.getElementById('dc');c.textContent=devs.length;if(!devs.length){l.innerHTML='<div class="em">No devices connected</div>';return}var h='';devs.forEach(function(d){var did=d.device_id||'';var dname=d.device_name||'Unknown';h+='<div class="dv" style="justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div class="di"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div><div class="dn">'+dname+'</div><div class="did">'+did+'</div></div></div><div style="display:flex;gap:4px"><button class="btn btn-g" style="padding:4px 8px;font-size:9px" onclick="doDisconnect(\'did\')">Disc</button><button class="btn btn-r" style="padding:4px 8px;font-size:9px" onclick="doRemove(\'did\')">Rem</button><button class="btn btn-r" style="padding:4px 8px;font-size:9px;background:rgba(255,69,58,0.25)" onclick="doBlock(\'did\')">Block</button></div></div>'.replace(/did/g,did)});l.innerHTML=h}
+
+window.doDisconnect=function(id){console.log('Disconnect:',id);invoke('disconnect_device',{deviceId:id}).then(function(r){console.log('Result:',r);showToast(r?'Disconnected':'Not connected',r?'s':'i');refresh()}).catch(function(e){console.error('Error:',e);showToast('Failed','e')})}
+
+window.doRemove=function(id){console.log('Remove:',id);invoke('remove_trusted_device',{deviceId:id}).then(function(r){console.log('Result:',r);showToast(r?'Removed':'Failed',r?'s':'e');refresh()}).catch(function(e){console.error('Error:',e);showToast('Failed','e')})}
+
+window.doBlock=function(id){console.log('Block:',id);invoke('blacklist_device',{deviceId:id}).then(function(r){console.log('Result:',r);showToast(r?'Blocked':'Failed',r?'s':'e');refresh()}).catch(function(e){console.error('Error:',e);showToast('Failed','e')})}
+
+function renderTrustedDevs(devs){var l=document.getElementById('tdl'),c=document.getElementById('tdc');c.textContent=devs.length;if(!devs.length){l.innerHTML='<div class="em">No trusted devices</div>';return}var h='';devs.forEach(function(d){var did=d.device_id||'';var dname=d.device_name||'Unknown';h+='<div class="dv" style="justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div class="di"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div><div class="dn">'+dname+'</div><div class="did">'+did+'</div></div></div><button class="btn btn-r" style="padding:4px 8px;font-size:9px" onclick="doRemove(\''+did+'\')">Remove</button></div>'});l.innerHTML=h}
+
+window.blockDevice=function(id){invoke('blacklist_device',{device_id:id}).then(function(){showToast('Device blocked','s');refresh()}).catch(function(){showToast('Failed','e')})}
+
+function renderBlockedDevs(devs){var l=document.getElementById('bdl'),c=document.getElementById('bdc');c.textContent=devs.length;if(!devs.length){l.innerHTML='<div class="em">No blocked devices</div>';return}var h='';devs.forEach(function(d){h+='<div class="dv" style="justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div class="di" style="background:linear-gradient(135deg,var(--red),#cc0000)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div><div><div class="dn">'+(d.device_name||'Unknown')+'</div><div class="did">'+d.device_id+'</div></div></div><button class="btn btn-gr" style="padding:4px 8px;font-size:9px" onclick="unblockDevice(\''+d.device_id+'\')">Unblock</button></div>'});l.innerHTML=h}
+
+window.unblockDevice=function(id){invoke('unblock_device',{deviceId:id}).then(function(){showToast('Device unblocked','s');refresh()}).catch(function(){showToast('Failed','e')})};
+
+window.clearAllData=function(){
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:200';
+  overlay.innerHTML='<div style="background:rgba(44,44,46,0.9);border-radius:14px;padding:20px;max-width:260px;width:80%;text-align:center;backdrop-filter:blur(40px);border:0.5px solid rgba(255,255,255,0.1)"><div style="font-size:14px;font-weight:600;margin-bottom:8px">Clear All Data?</div><div style="font-size:11px;color:rgba(235,235,245,0.6);margin-bottom:16px">This will remove all trusted devices, blocked devices, and settings.</div><div style="display:flex;gap:8px"><button id="cd-cancel" style="flex:1;padding:8px;border:none;border-radius:8px;font-size:11px;font-weight:500;background:rgba(58,58,60,0.5);color:#f5f5f7;cursor:pointer">Cancel</button><button id="cd-confirm" style="flex:1;padding:8px;border:none;border-radius:8px;font-size:11px;font-weight:500;background:rgba(255,69,58,0.2);color:#ff453a;cursor:pointer">Clear</button></div></div>';
+  document.body.appendChild(overlay);
+  document.getElementById('cd-cancel').onclick=function(){document.body.removeChild(overlay)};
+  document.getElementById('cd-confirm').onclick=function(){document.body.removeChild(overlay);invoke('clear_all_data').then(function(){showToast('All data cleared','s');refresh()}).catch(function(){showToast('Failed','e')})};
+}
+function renderTyping(d){var s=document.getElementById('ts');if(!d||!d.active_job){s.innerHTML='<div class="em">Idle</div>';return}var j=d.active_job,p=j.total_chars>0?(j.chars_typed/j.total_chars):0;s.innerHTML='<div style="padding:2px 0"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:10px;font-weight:500">Typing</span><span style="font-size:10px;color:var(--blue)">'+Math.round(p*100)+'%</span></div><div class="pt"><div class="pf" style="width:'+Math.round(p*100)+'%"></div></div><div style="font-size:8px;color:rgba(235,235,245,0.3);margin-top:3px">'+j.chars_typed+' / '+j.total_chars+'</div></div>'}
+
+function showSpinner(){document.getElementById('spinner').classList.add('show')}
+function hideSpinner(){document.getElementById('spinner').classList.remove('show')}
+
+function showAppr(n){document.getElementById('dd').textContent=n;document.getElementById('ov').classList.add('show')}
+function hideAppr(){document.getElementById('ov').classList.remove('show')}
+
+function refresh(){
+  invoke('get_status').then(function(s){
+    updateConn(s.connected_devices||0);
+    document.getElementById('up').textContent=formatUptime(s.uptime_seconds||0);
+    renderDevs(s.connected_device_list||[]);
+    isStealth=s.stealth_mode||false;
+    document.getElementById('stl').style.display=isStealth?'inline-block':'none';
+    document.getElementById('ip-addr').textContent=(s.local_ip||'Unknown')+':9876';
+    if(s.pending_connection)showAppr(s.pending_connection.device_name||'Unknown');
+    return invoke('get_trusted_devices');
+  }).then(function(td){
+    renderTrustedDevs(td.devices||[]);
+    return invoke('get_blacklisted_devices');
+  }).then(function(bd){
+    renderBlockedDevs(bd.devices||[]);
+    return invoke('get_typing_status');
+  }).then(renderTyping).catch(function(){});
+}
+
+// Refresh with iOS spinner
+window.doRefresh=function(){
+  if(isRefreshing)return;
+  isRefreshing=true;
+  showSpinner();
+  refresh();
+  setTimeout(function(){
+    hideSpinner();
+    isRefreshing=false;
+  },800);
+};
+
+window.app=function(){invoke('approve_connection').then(function(ok){hideAppr();if(ok)showToast('Approved','s');refresh()}).catch(function(){hideAppr()})};
+window.rej=function(){invoke('reject_connection').then(function(){hideAppr();showToast('Rejected','i')}).catch(function(){hideAppr()})};
+window.hideWin=function(){invoke('hide_window').catch(function(){})};
+window.togStl=function(){if(isStealth){invoke('disable_stealth_mode').then(function(){isStealth=false;document.getElementById('stl').style.display='none';showToast('Stealth Off','i')})}else{invoke('enable_stealth_mode').then(function(){isStealth=true;document.getElementById('stl').style.display='inline-block';showToast('Stealth On','s')})}};
+window.quit=function(){invoke('quit_app').catch(function(){window.close()})};
+
+function init(){
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app').style.display='flex';
+  refresh();
+  refreshTimer=setInterval(refresh,2000);
+}
+var attempts=0;
+var check=setInterval(function(){
+  attempts++;
+  if(findInvoke()){clearInterval(check);init()}
+  else if(attempts>500){clearInterval(check);document.getElementById('loading').innerHTML='<p style="color:var(--red);margin-bottom:8px">Tauri API not available</p><p style="font-size:11px">Run: cargo tauri dev</p>'}
+},100);
+</script>
+</body>
+</html>

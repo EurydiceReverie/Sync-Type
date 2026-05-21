@@ -1,0 +1,28 @@
+package com.lanremotetype.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+val LiquidBackground = Color(0xFF0A0A0F)
+val LiquidSurface = Color(0xFF12121A)
+val LiquidSurfaceLight = Color(0xFF1A1A25)
+val LiquidSurfaceHighlight = Color(0xFF252535)
+val LiquidBorder = Color(0x40FFFFFF)
+val LiquidBorderBright = Color(0x60FFFFFF)
+val LiquidOnSurface = Color(0xFFF0F0F5)
+val LiquidOnSurfaceSecondary = Color(0xFFA0A0B0)
+val LiquidPrimary = Color(0xFF5AC8FA)
+val LiquidPrimaryDark = Color(0xFF007AFF)
+val LiquidPrimaryGlow = Color(0x405AC8FA)
+val LiquidSecondary = Color(0xFFBF5AF2)
+val LiquidSecondaryGlow = Color(0x40BF5AF2)
+val LiquidGreen = Color(0xFF30D158)
+val LiquidGreenGlow = Color(0x4030D158)
+val LiquidOrange = Color(0xFFFF9F0A)
+val LiquidRed = Color(0xFFFF453A)
+val LiquidRedGlow = Color(0x40FF453A)
+val LiquidYellow = Color(0xFFFFD60A)
+val LiquidTeal = Color(0xFF64D2FF)
+val LiquidPink = Color(0xFFFF375F)
+val LiquidGradientStart = Color(0xFF0A0A0F)
+val LiquidGradientMid = Color(0xFF151520)
+val LiquidGradientEnd = Color(0xFF0F0F18)
